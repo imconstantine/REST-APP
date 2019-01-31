@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.imconstantine.netexam.database.mappers.ExamMapper">
+
+    <resultMap id="examStudentsResultsResult" type="com.imconstantine.netexam.model.Group">
+        <result property="name" column="name" />
+        <collection property="students" column="name" javaType="java.util.List"
+                    ofType="com.imconstantine.netexam.model.Student">
+            <result property="firstName" column="firstName" />
+            <result property="lastName" column="lastName" />
+            <result property="patronymic" column="patronymic" />
+            <result property="tmpResult" column="result" />
+        </collection>
+    </resultMap>
+
+    <select id="getStudentsResult" parameterType="Integer" resultMap="examStudentsResultsResult">
+        SELECT
+        user_student.`group` AS name, user.firstname AS firstName, user.lastname AS lastName,
+        user.patronymic AS patronymic, student_exam.result AS result
+        FROM student_exam
+        JOIN user_student ON user_student.id = student_exam.student_id
+        JOIN user ON user.id = student_exam.student_id
+        WHERE student_exam.exam_id = #{id} AND CURRENT_TIMESTAMP(6) > enddate ORDER BY user_student.`group`
+    </select>
+
+</mapper>
